@@ -1,0 +1,25 @@
+FROM ubuntu:18.04
+
+RUN apt-get update
+RUN apt-get install wget -y
+RUN apt-get install zip -y
+RUN apt-get install unzip -y
+RUN apt-get install apache2 -y
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get install php -y
+RUN service apache2 start
+RUN mkdir /tmp/wordpress
+WORKDIR /tmp/wordpress/
+RUN wget 'https://wordpress.org/latest.zip'
+RUN unzip latest.zip -d/var/www/
+WORKDIR /etc/apache2/sites-available/
+RUN wget 'https://raw.githubusercontent.com/MohsunAkbarov/LinuxTeam/533f16bdfe186f958ebcdf5735f143ffb366766e/wordpress.conf'
+RUN ln -s wordpress.conf /etc/apache2/sites-enabled/
+WORKDIR /var/www/wordpress/
+RUN rm -rf wp-config-sample.php
+RUN wget 'https://raw.githubusercontent.com/MohsunAkbarov/LinuxTeam/533f16bdfe186f958ebcdf5735f143ffb366766e/wp-config.php'
+RUN apt-get install mariadb-server -y
+RUN /etc/init.d/mysql start && mysql -u root -p12345 -e "create database wordpress;"
+RUN /etc/init.d/mysql start && mysql -u root -p12345 -e "create user 'wp-user'@'%' identified by '12345';"
+RUN /etc/init.d/mysql start && mysql -u root -p12345 -e "grant all on wordpress.* to 'wp-user'@'%' identified by '12345';"
+RUN /etc/init.d/mysql start && mysql -u root -p12345 -e "flush privileges;"
