@@ -1,5 +1,4 @@
 FROM ubuntu:18.04
-
 RUN apt-get update
 RUN apt-get install wget -y
 RUN apt-get install zip -y
@@ -7,14 +6,24 @@ RUN apt-get install unzip -y
 RUN apt-get install apache2 -y
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get install php -y
+RUN apt-get install php-mysql -y
+RUN apt-get install php-mysqlnd
+RUN apt-get install php-fpm -y
+RUN apt-get install php-zip -y
+RUN apt-get install php-gd -y
+RUN apt-get install php-json -y
+RUN apt-get install php-bcmath -y
+RUN apt-get install php-pear -y
+RUN apt-get install php-xml -y
+RUN apt-get install php-curl -y
+RUN apt-get install php-mbstring -y
 RUN service apache2 start
 RUN mkdir /tmp/wordpress
 WORKDIR /tmp/wordpress/
 RUN wget 'https://wordpress.org/latest.zip'
 RUN unzip latest.zip -d/var/www/
-WORKDIR /etc/apache2/sites-available/
+WORKDIR /etc/apache2/conf-enabled/
 RUN wget 'https://raw.githubusercontent.com/MohsunAkbarov/LinuxTeam/533f16bdfe186f958ebcdf5735f143ffb366766e/wordpress.conf'
-RUN ln -s wordpress.conf /etc/apache2/sites-enabled/
 WORKDIR /var/www/wordpress/
 RUN rm -rf wp-config-sample.php
 RUN wget 'https://raw.githubusercontent.com/MohsunAkbarov/LinuxTeam/533f16bdfe186f958ebcdf5735f143ffb366766e/wp-config.php'
@@ -23,3 +32,5 @@ RUN /etc/init.d/mysql start && mysql -u root -p12345 -e "create database wordpre
 RUN /etc/init.d/mysql start && mysql -u root -p12345 -e "create user 'wp-user'@'%' identified by '12345';"
 RUN /etc/init.d/mysql start && mysql -u root -p12345 -e "grant all on wordpress.* to 'wp-user'@'%' identified by '12345';"
 RUN /etc/init.d/mysql start && mysql -u root -p12345 -e "flush privileges;"
+RUN service mysql start
+RUN service apache2 start
