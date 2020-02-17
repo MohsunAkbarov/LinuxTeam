@@ -21,5 +21,4 @@ RUN /etc/init.d/mysql start && mysql -u root -p12345 -e "create database wordpre
 RUN /etc/init.d/mysql start && mysql -u root -p12345 -e "create user 'wp-user'@'%' identified by '12345';"
 RUN /etc/init.d/mysql start && mysql -u root -p12345 -e "grant all on wordpress.* to 'wp-user'@'%' identified by '12345';"
 RUN /etc/init.d/mysql start && mysql -u root -p12345 -e "flush privileges;"
-RUN service mysql start
-RUN service apache2 start
+ENTRYPOINT  /etc/init.d/apache2 start && /etc/init.d/mysql start
